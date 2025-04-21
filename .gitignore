@@ -1,0 +1,15 @@
+# Ignore Python bytecode
+*.pyc
+*.pyo
+__pycache__/
+
+# Ignore environment variables file (.env)
+.env
+
+# Ignore virtual environment directory
+venv/
+
+.DS_Store
+# Ignore other specific files
+workflow_definition_and_plan.txt
+
