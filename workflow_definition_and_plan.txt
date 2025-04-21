@@ -1,0 +1,109 @@
+Definition and Goal
+
+Build a Python application that scrapes data from `https://quotes.toscrape.com/` using BeautifulSoup, stores the data in a MySQL database, and runs the task at defined intervals using APScheduler. This will include structured logging and best practices in error handling to ensure code maintainability. These are commonly used pipelines in analytics dashboards, monitoring tools, or internal data services.
+
+
+Workflow planned steps
+
+1. Environment Preparation
+
+* Create a new folder named scraper/
+* Set up a Python virtual environment and activate it.
+* Install necessary dependencies and add them to requirements.txt. The main dependencies are;
+```
+beautifulsoup4
+requests
+mysql-connector-python
+apscheduler
+python-dotenv
+```
+* Implement the db.py script to set up the MySQL database and create the necessary tables for storing scraped data.
+
+2. Code Implementation
+
+Structure the code into modular Python files:
+* scraper.py — This contains functions to scrape and parse HTML from https://quotes.toscrape.com/.
+* db.py — This establishes connection to the MySQL database and provides the needed insert, query utilities.
+* scheduler.py — This configures and runs the APScheduler in the background.
+* log_config.py — This sets up logging configuration thereby implementing proper info/error tracking.
+* main.py — This is the main entry point of the application.
+
+3. Scraping Logic
+
+* Use requests to fetch the HTML content from https://quotes.toscrape.com/.
+* Use BeautifulSoup to extract the quotes which is regarded as the relevant data for this project.
+* Return the results as a list of dictionaries.
+
+4. Database Interaction
+
+* Use mysql-connector-python to connect to the MySQL server.
+* If the table does not exist, create it.
+* Insert new rows while avoiding duplication (via unique constraints or existence checks).
+
+5. Scheduling with APScheduler
+
+* Configure APScheduler to run the scraping function periodically (e.g., every 15 minutes).
+* Include job-level error handling.
+* Make sure the scheduler and main app run continuously or as a service.
+
+6. Logging and Monitoring
+* Use the built-in logging module.
+* Log to a rotating file (scraper.log) and optionally the console.
+* Log job start, completion, and any exceptions.
+
+7. Dockerization
+* Create a Dockerfile to containerize the scraper application.
+* Use docker-compose to spin up both the app and MySQL server for easy deployment.
+├── Dockerfile                 # Container setup for scraper
+├── docker-compose.yml        # Defines multi-container setup (app + MySQL)
+
+
+Planned Deliverables
+
+scraper/
+├── scraper/
+│   ├── scraper.py          # Web scraping logic
+│   ├── db.py               # MySQL interaction
+│   ├── scheduler.py        # APScheduler job configuration
+│   ├── log_config.py       # Logging configuration
+│   └── config.py           # Environment variable loading
+├── main.py                 # Application entry point
+├── requirements.txt        # Required packages
+├── .env                    # Contains DB credentials (ignored by git)
+├── README.md               # Setup & usage guide
+├── scraper.log             # Example log output
+└── workflow_definition_and_plan.txt
+
+
+Development
+
+* Built a modular scraper app that supports:
+* Periodic scraping of HTML data using BeautifulSoup.
+* Secure MySQL inserts using parameterized queries.
+* Custom logging to track job success/failure.
+* Scheduling with APScheduler to run tasks every 15 minutes.
+
+
+Core Functions Overview
+
+scrape_data() (in scraper.py)
+* Sends a request to the website.
+* Parses required HTML elements.
+* Returns structured data.
+
+insert_data() (in db.py)
+* Connects to MySQL.
+* Inserts records with error handling and uniqueness checks.
+
+start_scheduler() (in scheduler.py)
+* Sets up APScheduler job.
+* Logs each job’s execution.
+* Supports flexible intervals (cron or timedelta-based).
+
+Publishing/Usage
+
+* Run python main.py to start the scheduled scraper.
+* Execution logs are automatically written to `scraper.log` to aid in monitoring purposes and also in audits.
+* Use .env to securely provide DB credentials and other configs.
+* View database entries using a tool like MySQL.
+

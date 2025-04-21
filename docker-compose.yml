@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: scrapper-mysql-1
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "3306:3306"
+    networks:
+      - scraper-network
+
+  web-scraper:
+    build: .
+    container_name: scrapper-scraper-1
+    depends_on:
+      - mysql
+    command: /app/wait-for-it.sh mysql:3306 -- python3 main.py
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - scraper-network
+
+networks:
+  scraper-network:
+    driver: bridge
